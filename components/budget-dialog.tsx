@@ -1,29 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useTransactionStore, Budget } from "@/store/useTransactionStore";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from 'react';
+import { useTransactionStore, Budget } from '@/store/useTransactionStore';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-const expenseCategories = [
-  "Makanan",
-  "Transportasi",
-  "Tagihan",
-  "Hiburan",
-  "Belanja",
-  "Kesehatan",
-  "Pendidikan",
-  "Lainnya",
-];
+const expenseCategories = ['Makanan', 'Transportasi', 'Tagihan', 'Hiburan', 'Belanja', 'Kesehatan', 'Pendidikan', 'Lainnya'];
 
 export function BudgetDialog() {
   const { budgets, setBudgets } = useTransactionStore();
@@ -57,15 +41,12 @@ export function BudgetDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Atur Anggaran</Button>
+        <Button variant="destructive">Atur Anggaran</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[480px] bg-white/90">
+      <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>Atur Anggaran Bulanan</DialogTitle>
-          <DialogDescription>
-            Tetapkan batas pengeluaran untuk setiap kategori. Biarkan 0 jika
-            tidak ada batas.
-          </DialogDescription>
+          <DialogDescription>Tetapkan batas pengeluaran untuk setiap kategori. Biarkan 0 jika tidak ada batas.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-4">
           {expenseCategories.map((category) => (
@@ -75,14 +56,7 @@ export function BudgetDialog() {
               </Label>
               <div className="col-span-3 relative flex items-center">
                 <span className="text-sm text-muted-foreground pl-3">Rp</span>
-                <Input
-                  id={category}
-                  type="number"
-                  placeholder="0"
-                  value={localBudgets[category] || ""}
-                  onChange={(e) => handleBudgetChange(category, e.target.value)}
-                  className="pl-9"
-                />
+                <Input id={category} type="number" placeholder="0" value={localBudgets[category] || ''} onChange={(e) => handleBudgetChange(category, e.target.value)} className="pl-9" />
               </div>
             </div>
           ))}

@@ -37,12 +37,12 @@ export function AIAdvisorCard() {
 
     return (
       <div>
-        <p className="mb-2">
+        <p className="mb-2 text-sm md:text-base">
           Halo! Saya adalah konsultan keuangan virtual Anda. Setelah
           menganalisis data keuangan Anda bulan ini, berikut adalah
           ringkasannya:
         </p>
-        <ul className="list-disc pl-5 space-y-2 mb-4">
+        <ul className="list-disc pl-5 space-y-2 mb-4 text-sm md:text-base">
           <li>
             Total pengeluaran Anda adalah{" "}
             <strong className="text-primary">
@@ -66,39 +66,44 @@ export function AIAdvisorCard() {
             .
           </li>
         </ul>
-        <h4 className="font-semibold mb-2">Saran Keuangan untuk Anda:</h4>
-        <p className="text-muted-foreground">{advice}</p>
+        <h4 className="font-semibold mb-2 text-base md:text-lg">
+          Saran Keuangan untuk Anda:
+        </h4>
+        <p className="text-muted-foreground text-sm md:text-base">{advice}</p>
       </div>
     );
   };
 
   return (
-    <Card className="glass-card neumorphic-shadow-soft bg-white/90">
+    <Card className="glass-card neumorphic-shadow-soft bg-white/90 w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Wand2 className="text-primary" />
+        <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+          <Wand2 className="text-primary h-5 w-5 md:h-6 md:w-6" />
           Saran Keuangan dari AI
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">
+        <p className="text-xs sm:text-sm text-muted-foreground mb-4">
           Dapatkan ringkasan dan tips untuk mengoptimalkan keuangan Anda sebagai
           anak kos.
         </p>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-full">Dapatkan Analisis Keuangan</Button>
+            <Button className="w-full text-sm md:text-base">
+              Dapatkan Analisis Keuangan
+            </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg bg-white/90">
+          <DialogContent className="w-[95vw] max-w-lg rounded-lg bg-white/90 max-h-[85vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 ">
-                <Wand2 /> Analisis Keuangan Virtual
+              <DialogTitle className="flex items-center gap-2 text-base md:text-lg">
+                <Wand2 className="h-5 w-5 md:h-6 md:w-6" /> Analisis Keuangan
+                Virtual
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-xs md:text-sm">
                 Berikut adalah hasil analisis dari data keuangan Anda.
               </DialogDescription>
             </DialogHeader>
-            <div className="py-4 text-sm">{generateAISummary()}</div>
+            <div className="py-4">{generateAISummary()}</div>
           </DialogContent>
         </Dialog>
       </CardContent>
