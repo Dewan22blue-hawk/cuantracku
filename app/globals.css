@@ -1,26 +1,126 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* === BASE COLOR TOKENS === */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Light Theme */
+    --background-hsl: 210 40% 98%; /* Light gray */
+    --foreground-hsl: 222.2 84% 4.9%; /* Dark text */
+    --card-hsl: 0 0% 100%; /* Pure white */
+    --card-foreground-hsl: 222.2 84% 4.9%;
+    --popover-hsl: 0 0% 100%;
+    --popover-foreground-hsl: 222.2 84% 4.9%;
+    --dialog-hsl: 0 0% 100%; /* Solid dialog background */
+    --primary-hsl: 222.2 47.4% 11.2%;
+    --primary-foreground-hsl: 210 40% 98%;
+    --secondary-hsl: 210 40% 96.1%;
+    --secondary-foreground-hsl: 222.2 47.4% 11.2%;
+    --muted-hsl: 210 40% 96.1%;
+    --muted-foreground-hsl: 215.4 16.3% 46.9%;
+    --accent-hsl: 210 40% 96.1%;
+    --accent-foreground-hsl: 222.2 47.4% 11.2%;
+    --destructive-hsl: 0 84.2% 60.2%;
+    --destructive-foreground-hsl: 210 40% 98%;
+    --border-hsl: 214.3 31.8% 91.4%;
+    --input-hsl: 214.3 31.8% 91.4%;
+    --ring-hsl: 222.2 84% 4.9%;
+    --radius: 0.75rem;
+
+    /* Neumorphic Shadows (light) */
+    --shadow-color: 220 40% 70%;
+    --highlight-color: 0 0% 100%;
+  }
+
+  .dark {
+    /* Dark Theme */
+    --background-hsl: 222.2 84% 4.9%;
+    --foreground-hsl: 210 40% 98%;
+    --card-hsl: 217 33% 17%; /* Deep gray card */
+    --card-foreground-hsl: 210 40% 98%;
+    --popover-hsl: 217 33% 17%;
+    --popover-foreground-hsl: 210 40% 98%;
+    --dialog-hsl: 220 20% 25%; /* Solid dark dialog */
+    --primary-hsl: 210 40% 98%;
+    --primary-foreground-hsl: 222.2 47.4% 11.2%;
+    --secondary-hsl: 217.2 32.6% 17.5%;
+    --secondary-foreground-hsl: 210 40% 98%;
+    --muted-hsl: 217.2 32.6% 17.5%;
+    --muted-foreground-hsl: 215 20.2% 65.1%;
+    --accent-hsl: 217.2 32.6% 17.5%;
+    --accent-foreground-hsl: 210 40% 98%;
+    --destructive-hsl: 0 62.8% 30.6%;
+    --destructive-foreground-hsl: 210 40% 98%;
+    --border-hsl: 217.2 32.6% 17.5%;
+    --input-hsl: 217.2 32.6% 17.5%;
+    --ring-hsl: 212.7 26.8% 83.9%;
+
+    /* Neumorphic Shadows (dark) */
+    --shadow-color: 0 0% 0%;
+    --highlight-color: 220 20% 100%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* === BASE ELEMENT STYLES === */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  :root,
+  .dark {
+    --background: hsl(var(--background-hsl));
+    --foreground: hsl(var(--foreground-hsl));
+    --card: hsl(var(--card-hsl));
+    --card-foreground: hsl(var(--card-foreground-hsl));
+    --popover: hsl(var(--popover-hsl));
+    --popover-foreground: hsl(var(--popover-foreground-hsl));
+    --dialog: hsl(var(--dialog-hsl));
+    --primary: hsl(var(--primary-hsl));
+    --primary-foreground: hsl(var(--primary-foreground-hsl));
+    --secondary: hsl(var(--secondary-hsl));
+    --secondary-foreground: hsl(var(--secondary-foreground-hsl));
+    --muted: hsl(var(--muted-hsl));
+    --muted-foreground: hsl(var(--muted-foreground-hsl));
+    --accent: hsl(var(--accent-hsl));
+    --accent-foreground: hsl(var(--accent-foreground-hsl));
+    --destructive: hsl(var(--destructive-hsl));
+    --destructive-foreground: hsl(var(--destructive-foreground-hsl));
+    --border: hsl(var(--border-hsl));
+    --input: hsl(var(--input-hsl));
+    --ring: hsl(var(--ring-hsl));
+  }
+}
+
+/* === UTILITIES === */
+@layer utilities {
+  /* 💎 Solid Card Utility (non-transparent) */
+  .solid-card {
+    @apply bg-card text-card-foreground border border-border rounded-2xl shadow-md;
+  }
+
+  /* 🧊 Glass-effect (optional, semi-transparent aesthetic) */
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border border-white/20 rounded-2xl;
+  }
+
+  /* 🎯 Solid Dialog Utility (ensures modal panels not transparent) */
+  .dialog-solid {
+    @apply bg-[hsl(var(--dialog-hsl))] text-foreground border border-border rounded-lg shadow-xl;
+  }
+
+  .neumorphic-shadow-soft {
+    box-shadow: 8px 8px 16px hsla(var(--shadow-color), 0.2),
+      -8px -8px 16px hsla(var(--highlight-color), 0.05);
+  }
+
+  .neumorphic-shadow-hard {
+    box-shadow: 4px 4px 8px hsla(var(--shadow-color), 0.2),
+      -4px -4px 8px hsla(var(--highlight-color), 0.05);
+  }
 }
