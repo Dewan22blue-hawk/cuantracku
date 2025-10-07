@@ -14,16 +14,15 @@ export function Chatbot() {
       <motion.div
         initial={{ scale: 0, y: 100 }}
         animate={{ scale: 1, y: 0 }}
-        transition={{ delay: 1, type: "spring", stiffness: 100 }}
-        className="fixed bottom-6 right-6 z-50"
+        transition={{ delay: 1, type: 'spring', stiffness: 100 }}
+        className="fixed bottom-24 right-6 z-[130] md:bottom-8 md:right-8"
       >
         <Button
-          isIconOnly
           size="lg"
-          className="rounded-full h-16 w-16 neumorphic-shadow-hard"
+          className="rounded-full w-16 h-16 md:w-20 md:h-20 flex items-center justify-center neumorphic-shadow-hard"
           onClick={() => setOpen(true)}
         >
-          <MessageCircle size={32} />
+          <MessageCircle className="w-8 h-8 md:w-10 md:h-10" />
         </Button>
       </motion.div>
       <ChatDialog open={open} onOpenChange={setOpen} />

@@ -17,22 +17,16 @@ interface ChatDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-  }).format(value);
-
 export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
   const { transactions } = useTransactionStore();
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'bot',
-      text: "Halo! Saya konsultan keuangan virtual Anda. Apa yang ingin Anda ketahui tentang keuangan Anda? Coba tanya: 'total pengeluaran' atau 'top kategori'.",
+      text: "Halo! Saya konsultan keuangan virtual Anda. Apa yang ingin Anda ketahui tentang keuangan Anda?",
     },
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -43,58 +37,44 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
     scrollToBottom();
   }, [messages]);
 
-  const generateBotResponse = (userMessage: string) => {
-    const lowerCaseMessage = userMessage.toLowerCase();
-
-    if (lowerCaseMessage.includes('total pengeluaran')) {
-      const totalExpense = transactions.filter((t) => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
-      return `Total pengeluaran Anda sejauh ini adalah ${formatCurrency(totalExpense)}.`;
-    }
-
-    if (lowerCaseMessage.includes('top kategori')) {
-      const categorySpending = transactions
-        .filter((t) => t.type === 'expense')
-        .reduce((acc, t) => {
-          acc[t.category] = (acc[t.category] || 0) + t.amount;
-          return acc;
-        }, {} as Record<string, number>);
-
-      const topCategories = Object.entries(categorySpending)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3);
-
-      if (topCategories.length === 0) {
-        return 'Anda belum punya data pengeluaran untuk dianalisis.';
-      }
-
-      return (
-        <div>
-          <p>Tentu, berikut adalah 3 kategori pengeluaran terbesar Anda:</p>
-          <ul className="list-decimal pl-5 mt-2">
-            {topCategories.map(([category, amount]) => (
-              <li key={category}>
-                {category}: {formatCurrency(amount)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      );
-    }
-
-    return "Maaf, saya belum mengerti pertanyaan itu. Anda bisa coba tanya 'total pengeluaran' atau 'top kategori'.";
-  };
-
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = { sender: 'user', text: inputValue };
-    const botResponse: Message = {
-      sender: 'bot',
-      text: generateBotResponse(inputValue),
-    };
-
-    setMessages((prev) => [...prev, userMessage, botResponse]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
+    setIsLoading(true);
+
+    try {
+      const fullPrompt = `
+        Berdasarkan data transaksi berikut:
+        ${JSON.stringify(transactions, null, 2)}
+
+        Jawab pertanyaan ini: ${inputValue}
+      `;
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: fullPrompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from AI');
+      }
+
+      const data = await response.json();
+      const botResponse: Message = { sender: 'bot', text: data.text };
+      setMessages((prev) => [...prev, botResponse]);
+    } catch (error) {
+      console.error(error);
+      const errorResponse: Message = { sender: 'bot', text: 'Maaf, terjadi kesalahan. Coba lagi nanti.' };
+      setMessages((prev) => [...prev, errorResponse]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -110,6 +90,11 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
               <div className={`max-w-xs rounded-2xl p-3 text-sm ${msg.sender === 'user' ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-secondary text-secondary-foreground rounded-bl-none'}`}>{msg.text}</div>
             </motion.div>
           ))}
+          {isLoading && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-end gap-2 justify-start">
+              <div className="max-w-xs rounded-2xl p-3 text-sm bg-secondary text-secondary-foreground rounded-bl-none">...</div>
+            </motion.div>
+          )}
           <div ref={messagesEndRef} />
         </div>
         <div className="flex gap-2 pt-4 border-t border-white/10">

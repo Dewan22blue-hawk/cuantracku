@@ -22,7 +22,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const formSchema = z.object({
   type: z.enum(['income', 'expense']),
-  amount: z.coerce.number().positive({ message: 'Amount must be positive.' }),
+  amount: z.number().positive({ message: 'Amount must be positive.' }),
   description: z.string().min(1, { message: 'Description is required.' }),
   category: z.string().min(1, { message: 'Category is required.' }),
   date: z.date(),
@@ -49,13 +49,6 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      type: 'expense',
-      amount: 0,
-      description: '',
-      category: '',
-      date: new Date(),
-    },
   });
 
   useEffect(() => {
@@ -126,9 +119,10 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
                   <FormControl>
                     <Tabs
                       value={field.value}
-                      onValueChange={(value: TxType) => {
-                        field.onChange(value);
-                        setTransactionType(value);
+                      onValueChange={(value: string) => {
+                        const typedValue = value as TxType;
+                        field.onChange(typedValue);
+                        setTransactionType(typedValue);
                         form.setValue('category', '');
                       }}
                       className="w-full"
