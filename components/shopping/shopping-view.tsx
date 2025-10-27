@@ -94,6 +94,7 @@ export function ShoppingView() {
   const [isClient, setIsClient] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [newItemCategory, setNewItemCategory] = useState("Lainnya");
 
   useEffect(() => {
     setIsClient(true);
@@ -124,15 +125,24 @@ export function ShoppingView() {
   const handleAddItem = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!activeListId || isCompleted) return;
-    // ... (logic tetap seperti aslinya)
-    const fd = new FormData(e.currentTarget);
-    const name = (fd.get('name') as string) || '';
-    const qty = parseFloat((fd.get('qty') as string) || '0');
-    const unit = (fd.get('unit') as string) || 'pcs';
-    const estPrice = parseFloat((fd.get('estPrice') as string) || '0');
-    if (!name || !qty || estPrice < 0) return;
-    addItem(activeListId, { name, qty, unit, estPrice });
-    e.currentTarget.reset();
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const qty = parseFloat(formData.get("qty") as string);
+    const estPrice = parseFloat(formData.get("estPrice") as string);
+    const unit = formData.get("unit") as string || 'pcs';
+
+    if (name && qty > 0 && estPrice >= 0) {
+      addItem(activeListId, {
+        name,
+        qty,
+        unit,
+        estPrice,
+        category: newItemCategory, // Use state instead of form data
+        notes: "",
+      });
+      e.currentTarget.reset();
+    }
   };
 
   if (!isClient) return null;
@@ -235,18 +245,24 @@ export function ShoppingView() {
 
           {/* Tambah Item */}
           <Card className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white/70 dark:bg-slate-900/60 backdrop-blur shadow-sm">
-            <CardHeader>
-              <CardTitle className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-sky-500 to-rose-500 dark:from-indigo-400 dark:via-sky-300 dark:to-rose-300">Tambah Item</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle>Tambah Item</CardTitle></CardHeader>
             <CardContent>
-              <form onSubmit={handleAddItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
-                <Input name="name" placeholder="Nama Item" required disabled={isCompleted} className="h-11 rounded-xl bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60" />
-                <Input name="qty" type="number" placeholder="Jumlah" required min="0.1" step="0.1" disabled={isCompleted} className="h-11 rounded-xl bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60" />
-                <Input name="unit" placeholder="Unit (pcs)" disabled={isCompleted} className="h-11 rounded-xl bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60" />
-                <Input name="estPrice" type="number" placeholder="Estimasi Harga" required min="0" disabled={isCompleted} className="h-11 rounded-xl bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60" />
-                <Button type="submit" disabled={isCompleted} className="h-11 rounded-xl bg-gradient-to-r from-indigo-600 via-sky-500 to-rose-500 text-white hover:opacity-95 active:opacity-90">
-                  Tambah
-                </Button>
+              <form onSubmit={handleAddItem} className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <Input name="name" placeholder="Nama Item" required disabled={isCompleted} className="md:col-span-2" />
+                <Input name="qty" type="number" placeholder="Jumlah" required min="0.1" step="0.1" disabled={isCompleted}/>
+                <Input name="unit" placeholder="Unit (pcs)" disabled={isCompleted} />
+                <Select value={newItemCategory} onValueChange={setNewItemCategory} disabled={isCompleted}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Kategori" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {shoppingStore.categories.map(cat => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input name="estPrice" type="number" placeholder="Estimasi Harga" required min="0" disabled={isCompleted} />
+                <Button type="submit" className="col-span-2 md:col-span-1" disabled={isCompleted}>Tambah</Button>
               </form>
             </CardContent>
           </Card>

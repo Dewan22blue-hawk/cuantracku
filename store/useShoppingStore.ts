@@ -51,7 +51,7 @@ export interface PriceHistoryEntry {
   date: number;
 }
 
-interface ShoppingState {
+export interface ShoppingState {
   version: number;
   lists: ShoppingList[];
   activeListId: string | null;
@@ -61,7 +61,7 @@ interface ShoppingState {
   categories: string[];
 }
 
-interface ShoppingActions {
+export interface ShoppingActions {
   setActiveList: (listId: string) => void;
   createList: (data: { title: string; period: string; store: string }) => ShoppingList;
   updateList: (listId: string, data: Partial<Pick<ShoppingList, "title" | "period" | "store">>) => void;
