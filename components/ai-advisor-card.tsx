@@ -1,11 +1,12 @@
+
 'use client';
 
-import { useState } from 'react';
-import { useTransactionStore } from '@/store/useTransactionStore';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useTransactionStore } from '../store/useTransactionStore';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Wand2 } from 'lucide-react';
+
 
 export function AIAdvisorCard() {
   const transactions = useTransactionStore((state) => state.transactions);

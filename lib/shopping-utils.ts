@@ -1,5 +1,5 @@
 
-import { type ShoppingList } from "../store/useShoppingStore";
+import { type ShoppingList, type ShoppingState } from "../store/useShoppingStore";
 
 // --- CALCULATOR ---
 export const calcTotals = (list: ShoppingList | undefined) => {
@@ -33,7 +33,7 @@ export const exportToJson = (data: object, filename: string) => {
   link.click();
 };
 
-export const importFromJson = (file: File, onRead: (data: any) => void) => {
+export const importFromJson = (file: File, onRead: (data: ShoppingState) => void) => {
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
