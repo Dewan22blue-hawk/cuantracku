@@ -1,15 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useTransactionStore, Budget } from '@/store/useTransactionStore';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect, ReactNode } from 'react';
+import { useTransactionStore, Budget } from '../store/useTransactionStore';
+import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 
 const expenseCategories = ['Makanan', 'Transportasi', 'Tagihan', 'Hiburan', 'Belanja', 'Kesehatan', 'Pendidikan', 'Lainnya'];
 
-export function BudgetDialog() {
+interface BudgetDialogProps {
+  trigger?: ReactNode;
+}
+
+export function BudgetDialog({ trigger }: BudgetDialogProps) {
   const { budgets, setBudgets } = useTransactionStore();
   const [localBudgets, setLocalBudgets] = useState<Record<string, number>>({});
   const [open, setOpen] = useState(false);
@@ -41,7 +45,7 @@ export function BudgetDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive">Atur Anggaran</Button>
+        {trigger || <Button variant="destructive">Atur Anggaran</Button>}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>

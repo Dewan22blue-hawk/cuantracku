@@ -1,11 +1,22 @@
 'use client';
 
-import { Home, PlusCircle } from 'lucide-react';
+import { Home, PlusCircle, ShoppingCart, Archive, Wallet } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '../lib/utils';
 import { BudgetDialog } from './budget-dialog';
 import { TransactionDialog } from './add-transaction-dialog';
 import { Button } from './ui/button';
 
 export function BottomNavigation() {
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: '/', icon: Home, label: 'Beranda' },
+    { href: '/shopping', icon: ShoppingCart, label: 'Belanja' },
+    { href: '/inventory', icon: Archive, label: 'Stok' },
+  ];
+
   return (
     <nav
       className="
@@ -18,43 +29,69 @@ export function BottomNavigation() {
         md:hidden
       "
     >
-      <div className="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
-        {/* Transaction Dialog */}
+      <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
+        {navItems.slice(0, 2).map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <div key={item.href} className="flex items-center justify-center">
+              <Link href={item.href} passHref>
+                <Button
+                  variant="ghost"
+                  className="inline-flex flex-col items-center justify-center px-5 h-full"
+                >
+                  <item.icon className={cn("w-5 h-5 mb-1", isActive && "text-emerald-500")} />
+                  <span className={cn("text-sm", isActive && "text-emerald-500")}>{item.label}</span>
+                </Button>
+              </Link>
+            </div>
+          );
+        })}
+
+        {/* Transaction Dialog (Center Button) */}
         <div className="flex items-center justify-center">
           <TransactionDialog
             trigger={
               <Button
                 variant="ghost"
-                className="
-                  inline-flex flex-col items-center justify-center px-5
-                  hover:bg-accent hover:text-accent-foreground
-                  active:scale-95 transition-all duration-150
-                "
+                className="inline-flex flex-col items-center justify-center px-5 h-full"
               >
-                <PlusCircle className="w-5 h-5 mb-1 text-gray-500 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400" />
+                <PlusCircle className="w-6 h-6 mb-1 text-emerald-500" />
                 <span className="text-sm">Baru</span>
               </Button>
             }
           />
         </div>
+
+        {navItems.slice(2).map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <div key={item.href} className="flex items-center justify-center">
+              <Link href={item.href} passHref>
+                <Button
+                  variant="ghost"
+                  className="inline-flex flex-col items-center justify-center px-5 h-full"
+                >
+                  <item.icon className={cn("w-5 h-5 mb-1", isActive && "text-emerald-500")} />
+                  <span className={cn("text-sm", isActive && "text-emerald-500")}>{item.label}</span>
+                </Button>
+              </Link>
+            </div>
+          );
+        })}
+
         {/* Budget Dialog */}
         <div className="flex items-center justify-center">
-          <BudgetDialog />
-        </div>
-        {/* Home Button */}
-        <div className="flex items-center justify-center">
-          <Button
-            variant="ghost"
-            className="
-              inline-flex flex-col items-center justify-center px-5
-              hover:bg-accent hover:text-accent-foreground
-              active:scale-95 transition-all duration-150
-            "
-            onClick={() => (window.location.href = '/')}
-          >
-            <Home className="w-5 h-5 mb-1 text-gray-500 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400" />
-            <span className="text-sm">Beranda</span>
-          </Button>
+          <BudgetDialog
+            trigger={
+              <Button
+                variant="ghost"
+                className="inline-flex flex-col items-center justify-center px-5 h-full"
+              >
+                <Wallet className="w-5 h-5 mb-1" />
+                <span className="text-sm">Anggaran</span>
+              </Button>
+            }
+          />
         </div>
       </div>
     </nav>
