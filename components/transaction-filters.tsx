@@ -30,12 +30,17 @@ export function TransactionFilters({ dateRange, setDateRange, selectedCategory, 
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
-      <div className={cn('grid gap-2')}>
+    <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center mb-4">
+      {/* Date Range */}
+      <div className="grid gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <Button id="date" variant={'outline'} className={cn('w-[300px] justify-start text-left font-normal', !dateRange && 'text-muted-foreground')}>
-              <CalendarIcon className="mr-2 h-4 w-4 bg-white/90 dark:bg-zinc-900/90" />
+            <Button
+              id="date"
+              variant="outline"
+              className={cn('w-full md:w-[300px] justify-start text-left font-normal rounded-xl h-11', 'bg-white/70 dark:bg-slate-900/60 backdrop-blur', 'border-slate-200/70 dark:border-slate-700/60', !dateRange && 'text-muted-foreground')}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
               {dateRange?.from ? (
                 dateRange.to ? (
                   <>
@@ -49,24 +54,31 @@ export function TransactionFilters({ dateRange, setDateRange, selectedCategory, 
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-white/90 dark:bg-zinc-900/90" align="start">
+          <PopoverContent className="w-auto p-0 bg-white/90 dark:bg-slate-900/85 backdrop-blur rounded-2xl border border-slate-200/60 dark:border-slate-700/60" align="start">
             <Calendar initialFocus mode="range" defaultMonth={dateRange?.from} selected={dateRange} onSelect={setDateRange} numberOfMonths={2} />
           </PopoverContent>
         </Popover>
       </div>
+
+      {/* Category */}
       <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-        <SelectTrigger className="w-full md:w-[200px] bg-white/90 dark:bg-zinc-900/90">
+        <SelectTrigger
+          className="w-full md:w-[220px] h-11 rounded-xl bg-white/70 dark:bg-slate-900/60 backdrop-blur
+                     border-slate-200/70 dark:border-slate-700/60"
+        >
           <SelectValue placeholder="Filter per kategori" />
         </SelectTrigger>
-        <SelectContent className="bg-white/90 dark:bg-zinc-900/90">
+        <SelectContent className="bg-white/95 dark:bg-slate-900/90 backdrop-blur rounded-xl border border-slate-200/60 dark:border-slate-700/60">
           {allCategories.map((category) => (
-            <SelectItem key={category} value={category}>
+            <SelectItem key={category} value={category} className="cursor-pointer">
               {category}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      <Button onClick={handleReset} variant="ghost">
+
+      {/* Reset */}
+      <Button onClick={handleReset} variant="ghost" className="h-11 rounded-xl hover:bg-slate-100/70 dark:hover:bg-slate-800/60">
         Reset
       </Button>
     </div>

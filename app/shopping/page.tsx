@@ -1,16 +1,9 @@
+import { ShoppingView } from '../../components/shopping/shopping-view';
 
-import { ShoppingView } from "../../components/shopping/shopping-view";
-
-// This is a Server Component by default in App Router
+// Server Component
 export default function ShoppingPage() {
   return (
-    <main>
-      {/* 
-        ShoppingView is a Client Component that handles all interactivity.
-        By rendering it from a Server Component, we ensure that any code 
-        accessing localStorage or relying on browser APIs (like in the store) 
-        only runs on the client, preventing hydration errors.
-      */}
+    <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 max-w-7xl">
       <ShoppingView />
     </main>
   );

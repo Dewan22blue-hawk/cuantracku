@@ -17,78 +17,62 @@ export function BottomNavigation() {
     { href: '/inventory', icon: Archive, label: 'Stok' },
   ];
 
+  const isActive = (href: string) => pathname === href;
+
   return (
     <nav
-      className="
-        fixed bottom-0 left-0 z-[120] w-full h-16 
-        border-t border-border 
-
-        bg-white/90 text-foreground 
-        dark:bg-gray-900
-        shadow-[0_-2px_10px_rgba(0,0,0,0.08)] 
-        md:hidden
-      "
+      aria-label="Bottom navigation"
+      className={cn('fixed bottom-0 left-0 z-[120] w-full h-16 md:hidden', 'border-t border-slate-200/70 dark:border-slate-800/70', 'bg-white/70 dark:bg-slate-900/70 backdrop-blur', 'shadow-[0_-8px_24px_rgba(2,6,23,0.06)]')}
     >
-      <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
-        {navItems.slice(0, 2).map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <div key={item.href} className="flex items-center justify-center">
-              <Link href={item.href} passHref>
-                <Button
-                  variant="ghost"
-                  className="inline-flex flex-col items-center justify-center px-5 h-full"
-                >
-                  <item.icon className={cn("w-5 h-5 mb-1", isActive && "text-emerald-500")} />
-                  <span className={cn("text-sm", isActive && "text-emerald-500")}>{item.label}</span>
-                </Button>
-              </Link>
-            </div>
-          );
-        })}
+      <div className="grid h-full max-w-xl grid-cols-5 mx-auto font-medium">
+        {navItems.slice(0, 2).map((item) => (
+          <div key={item.href} className="flex items-center justify-center">
+            <Link href={item.href} aria-label={item.label}>
+              <Button variant="ghost" className="inline-flex flex-col items-center justify-center px-5 h-full">
+                <item.icon className={cn('w-5 h-5 mb-1', isActive(item.href) ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400')} />
+                <span className={cn('text-[13px]', isActive(item.href) ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-600 dark:text-slate-400')}>{item.label}</span>
+              </Button>
+            </Link>
+          </div>
+        ))}
 
-        {/* Transaction Dialog (Center Button) */}
+        {/* Center FAB: Transaction Dialog */}
         <div className="flex items-center justify-center">
           <TransactionDialog
             trigger={
-              <Button
-                variant="ghost"
-                className="inline-flex flex-col items-center justify-center px-5 h-full"
+              <button
+                aria-label="Tambah transaksi"
+                className={cn(
+                  'inline-flex items-center justify-center -mt-6',
+                  'h-14 w-14 rounded-full',
+                  'bg-gradient-to-r from-indigo-600 via-sky-500 to-rose-500 text-white',
+                  'shadow-lg shadow-rose-500/20 hover:shadow-xl active:scale-95 transition-all'
+                )}
               >
-                <PlusCircle className="w-6 h-6 mb-1 text-emerald-500" />
-                <span className="text-sm">Baru</span>
-              </Button>
+                <PlusCircle className="w-6 h-6" />
+              </button>
             }
           />
         </div>
 
-        {navItems.slice(2).map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <div key={item.href} className="flex items-center justify-center">
-              <Link href={item.href} passHref>
-                <Button
-                  variant="ghost"
-                  className="inline-flex flex-col items-center justify-center px-5 h-full"
-                >
-                  <item.icon className={cn("w-5 h-5 mb-1", isActive && "text-emerald-500")} />
-                  <span className={cn("text-sm", isActive && "text-emerald-500")}>{item.label}</span>
-                </Button>
-              </Link>
-            </div>
-          );
-        })}
+        {navItems.slice(2).map((item) => (
+          <div key={item.href} className="flex items-center justify-center">
+            <Link href={item.href} aria-label={item.label}>
+              <Button variant="ghost" className="inline-flex flex-col items-center justify-center px-5 h-full">
+                <item.icon className={cn('w-5 h-5 mb-1', isActive(item.href) ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400')} />
+                <span className={cn('text-[13px]', isActive(item.href) ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-600 dark:text-slate-400')}>{item.label}</span>
+              </Button>
+            </Link>
+          </div>
+        ))}
 
         {/* Budget Dialog */}
         <div className="flex items-center justify-center">
           <BudgetDialog
             trigger={
-              <Button
-                variant="ghost"
-                className="inline-flex flex-col items-center justify-center px-5 h-full"
-              >
-                <Wallet className="w-5 h-5 mb-1" />
-                <span className="text-sm">Anggaran</span>
+              <Button variant="ghost" aria-label="Atur anggaran" className="inline-flex flex-col items-center justify-center px-5 h-full">
+                <Wallet className="w-5 h-5 mb-1 text-slate-500 dark:text-slate-400" />
+                <span className="text-[13px] text-slate-600 dark:text-slate-400">Anggaran</span>
               </Button>
             }
           />

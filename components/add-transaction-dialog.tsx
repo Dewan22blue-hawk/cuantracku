@@ -32,7 +32,6 @@ type FormValues = z.infer<typeof formSchema>;
 type TxType = FormValues['type'];
 
 const expenseCategories = ['Makanan', 'Transportasi', 'Tagihan', 'Hiburan', 'Belanja', 'Kesehatan', 'Pendidikan', 'Lainnya'] as const;
-
 const incomeCategories = ['Gaji', 'Bonus', 'Hadiah', 'Investasi', 'Lainnya'] as const;
 
 interface TransactionDialogProps {
@@ -96,20 +95,22 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
       onOpenChange={(v) => {
         setOpen(v);
         if (!v) {
-          // optional: reset saat ditutup
           form.reset({ ...form.getValues(), category: '' });
         }
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="dialog-solid sm:max-w-[425px]">
+
+      <DialogContent className={cn('sm:max-w-[440px] rounded-2xl', 'border border-slate-200/60 dark:border-slate-700/60', 'bg-white/80 dark:bg-slate-900/70 backdrop-blur', 'shadow-xl')}>
         <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Transaksi' : 'Tambah Transaksi Baru'}</DialogTitle>
-          <DialogDescription>{isEditMode ? 'Ubah detail transaksi Anda.' : 'Isi detail transaksi Anda. Klik simpan jika sudah selesai.'}</DialogDescription>
+          <DialogTitle className="text-lg md:text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-sky-500 to-rose-500 dark:from-indigo-400 dark:via-sky-300 dark:to-rose-300">
+            {isEditMode ? 'Edit Transaksi' : 'Tambah Transaksi Baru'}
+          </DialogTitle>
+          <DialogDescription className="text-xs md:text-sm text-slate-500 dark:text-slate-400">{isEditMode ? 'Ubah detail transaksi Anda.' : 'Isi detail transaksi Anda. Klik simpan jika sudah selesai.'}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             {/* TYPE */}
             <FormField
               control={form.control}
@@ -127,9 +128,27 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
                       }}
                       className="w-full"
                     >
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="expense">Pengeluaran</TabsTrigger>
-                        <TabsTrigger value="income">Pemasukan</TabsTrigger>
+                      <TabsList className={cn('grid w-full grid-cols-2 rounded-xl', 'bg-slate-100/70 dark:bg-slate-800/60', 'p-1')}>
+                        <TabsTrigger
+                          value="expense"
+                          className={cn(
+                            'rounded-lg data-[state=active]:text-white',
+                            'data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:via-sky-500 data-[state=active]:to-rose-500',
+                            'transition-colors'
+                          )}
+                        >
+                          Pengeluaran
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="income"
+                          className={cn(
+                            'rounded-lg data-[state=active]:text-white',
+                            'data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:via-sky-500 data-[state=active]:to-rose-500',
+                            'transition-colors'
+                          )}
+                        >
+                          Pemasukan
+                        </TabsTrigger>
                       </TabsList>
                     </Tabs>
                   </FormControl>
@@ -144,22 +163,20 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nominal</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-600 dark:text-slate-300">Nominal</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      inputMode="decimal"
-                      placeholder="0"
-                      value={Number.isFinite(field.value) ? field.value : 0}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.currentTarget.value === ''
-                            ? '' // biarkan kosong di UI; akan dikoreksi zod saat submit
-                            : e.currentTarget.valueAsNumber
-                        )
-                      }
-                      onBlur={field.onBlur}
-                    />
+                    <div className="relative">
+                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
+                      <Input
+                        type="number"
+                        inputMode="decimal"
+                        placeholder="0"
+                        className="pl-9 pr-3 h-11 rounded-xl bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60 focus-visible:ring-2 focus-visible:ring-sky-400"
+                        value={Number.isFinite(field.value) ? field.value : 0}
+                        onChange={(e) => field.onChange(e.currentTarget.value === '' ? '' : e.currentTarget.valueAsNumber)}
+                        onBlur={field.onBlur}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -172,9 +189,9 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Deskripsi</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-600 dark:text-slate-300">Deskripsi</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Kopi susu" {...field} />
+                    <Input placeholder="e.g. Kopi susu" className="h-11 rounded-xl bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60 focus-visible:ring-2 focus-visible:ring-sky-400" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -187,16 +204,16 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Kategori</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-600 dark:text-slate-300">Kategori</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11 rounded-xl bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60 focus:ring-sky-400">
                         <SelectValue placeholder="Pilih kategori" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-white/90 dark:bg-zinc-900">
+                    <SelectContent className="bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-xl border border-slate-200/60 dark:border-slate-700/60">
                       {(transactionType === 'expense' ? expenseCategories : incomeCategories).map((cat) => (
-                        <SelectItem key={cat} value={cat}>
+                        <SelectItem key={cat} value={cat} className="cursor-pointer">
                           {cat}
                         </SelectItem>
                       ))}
@@ -213,17 +230,20 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
               name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Tanggal Transaksi</FormLabel>
+                  <FormLabel className="text-sm font-medium text-slate-600 dark:text-slate-300">Tanggal Transaksi</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
-                        <Button variant="outline" className={cn('w-full pl-3 text-left font-normal ', !field.value && 'text-muted-foreground')}>
-                          {field.value ? format(field.value, 'PPP') : <span>Pilih tanggal</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <Button
+                          variant="outline"
+                          className={cn('w-full pl-3 pr-3 h-11 justify-between rounded-xl', 'bg-white/70 dark:bg-slate-950/40 border-slate-200/70 dark:border-slate-700/60', 'hover:bg-white/90 dark:hover:bg-slate-900/60')}
+                        >
+                          <span className="text-left font-normal">{field.value ? format(field.value, 'PPP') : <span className="text-muted-foreground">Pilih tanggal</span>}</span>
+                          <CalendarIcon className="ml-3 h-4 w-4 opacity-60" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white/90 dark:bg-zinc-900/90" align="start">
+                    <PopoverContent className="w-auto p-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-xl border border-slate-200/60 dark:border-slate-700/60" align="start">
                       <Calendar mode="single" selected={field.value} onSelect={(d?: Date) => field.onChange(d ?? new Date())} initialFocus />
                     </PopoverContent>
                   </Popover>
@@ -232,7 +252,7 @@ export function TransactionDialog({ trigger, transactionToEdit }: TransactionDia
               )}
             />
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className={cn('w-full h-11 rounded-xl', 'bg-gradient-to-r from-indigo-600 via-sky-500 to-rose-500 text-white', 'hover:opacity-95 active:opacity-90', 'transition-opacity')}>
               {isEditMode ? 'Simpan Perubahan' : 'Simpan Transaksi'}
             </Button>
           </form>
